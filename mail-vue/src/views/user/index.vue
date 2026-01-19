@@ -218,7 +218,10 @@
     </el-dialog>
     <el-dialog v-model="showAdd" :title="$t('addUser')">
       <div class="container">
-        <el-input v-model="addForm.email" type="text" :placeholder="$t('emailAccount')" autocomplete="off">
+        <el-input :class="settingStore.settings.randomPrefix === 1 ? 'has-prepend' : ''" v-model="addForm.email" type="text" :placeholder="$t('emailAccount')" autocomplete="off">
+          <template #prepend v-if="settingStore.settings.randomPrefix === 1">
+            <el-button type="primary" @click="generateRandomPrefix">{{ $t('generateRandom') }}</el-button>
+          </template>
           <template #append>
             <div @click.stop="openSelect">
               <el-select
@@ -625,6 +628,21 @@ function submit() {
   })
 }
 
+function generateRandomPrefix() {
+  const { randomPrefixLength, randomPrefixLetter, randomPrefixNumber } = settingStore.settings;
+  let chars = '';
+  if (randomPrefixLetter === 1) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (randomPrefixNumber === 1) chars += '0123456789';
+  
+  if (!chars) return;
+  
+  let result = '';
+  for (let i = 0; i < randomPrefixLength; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  addForm.email = result;
+}
+
 
 function formatSendType(user) {
   if (user.sendAction.sendType === 'day') return t('daily')
@@ -968,6 +986,27 @@ function adjustWidth() {
   display: grid;
   grid-template-columns: 1fr;
   gap: 15px;
+  
+  .has-prepend :deep(.el-input__wrapper) {
+    border-radius: 0;
+  }
+
+  :deep(.el-input-group__prepend) {
+    padding: 0;
+    background: transparent;
+    border: none;
+    flex-shrink: 0;
+    margin: 0;
+    
+    .el-button {
+      border-radius: 6px 0 0 6px;
+      height: 32px;
+      padding: 8px 15px;
+      white-space: nowrap;
+      min-width: fit-content;
+      margin: 0;
+    }
+  }
 }
 
 .type {

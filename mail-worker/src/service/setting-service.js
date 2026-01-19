@@ -1,12 +1,12 @@
 import KvConst from '../const/kv-const';
 import setting from '../entity/setting';
 import orm from '../entity/orm';
-import {verifyRecordType} from '../const/entity-const';
+import { verifyRecordType } from '../const/entity-const';
 import fileUtils from '../utils/file-utils';
 import r2Service from './r2-service';
 import constant from '../const/constant';
 import BizError from '../error/biz-error';
-import {t} from '../i18n/i18n'
+import { t } from '../i18n/i18n'
 import verifyRecordService from './verify-record-service';
 
 const settingService = {
@@ -134,7 +134,7 @@ const settingService = {
 		}
 
 		if (background) {
-			await r2Service.delete(c,background)
+			await r2Service.delete(c, background)
 			await orm(c).update(setting).set({ background: '' }).run();
 			await this.refresh(c)
 		}
@@ -200,7 +200,11 @@ const settingService = {
 			linuxdoClientId: settingRow.linuxdoClientId,
 			linuxdoCallbackUrl: settingRow.linuxdoCallbackUrl,
 			linuxdoSwitch: settingRow.linuxdoSwitch,
-			minEmailPrefix: settingRow.minEmailPrefix
+			minEmailPrefix: settingRow.minEmailPrefix,
+			randomPrefix: settingRow.randomPrefix,
+			randomPrefixLength: settingRow.randomPrefixLength,
+			randomPrefixLetter: settingRow.randomPrefixLetter,
+			randomPrefixNumber: settingRow.randomPrefixNumber
 		};
 	}
 };

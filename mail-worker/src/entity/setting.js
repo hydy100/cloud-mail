@@ -46,6 +46,10 @@ export const setting = sqliteTable('setting', {
 	tgMsgTo: text('tg_msg_to').default('show').notNull(),
 	tgMsgText: text('tg_msg_text').default('hide').notNull(),
 	minEmailPrefix: integer('min_email_prefix').default(0).notNull(),
-	emailPrefixFilter: text('email_prefix_filter').default('').notNull()
+	emailPrefixFilter: text('email_prefix_filter').default('').notNull(),
+	randomPrefix: integer('random_prefix').default(0).notNull(),
+	randomPrefixLength: integer('random_prefix_length').default(8).notNull(),
+	randomPrefixLetter: integer('random_prefix_letter').default(1).notNull(),
+	randomPrefixNumber: integer('random_prefix_number').default(1).notNull()
 });
 export default setting

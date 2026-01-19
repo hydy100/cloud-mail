@@ -309,7 +309,14 @@ const en = {
     character: '',
     mustNotContain: 'Must Not Contain',
     mustNotContainDesc: 'Separate with commas',
-    setSuccess: 'Settings saved successfully'
+    setSuccess: 'Settings saved successfully',
+    randomPrefix: 'Random Prefix',
+    randomPrefixDesc: 'Enable random prefix generation for registration and adding emails',
+    randomPrefixLength: 'Prefix Length',
+    randomPrefixLetter: 'Include Letters',
+    randomPrefixNumber: 'Include Numbers',
+    generateRandom: 'Random',
+    randomPrefixSettingError: 'Must select at least letters or numbers'
 }
 
 export default en

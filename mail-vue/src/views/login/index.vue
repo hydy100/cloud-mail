@@ -49,8 +49,11 @@
           </el-button>
         </div>
         <div v-show="show !== 'login'">
-          <el-input class="email-input" v-model="registerForm.email" type="text" :placeholder="$t('emailAccount')"
+          <el-input class="email-input" :class="settingStore.settings.randomPrefix === 1 ? 'has-prepend' : ''" v-model="registerForm.email" type="text" :placeholder="$t('emailAccount')"
                     autocomplete="off">
+            <template #prepend v-if="settingStore.settings.randomPrefix === 1">
+              <el-button type="primary" @click="generateRandomPrefix">{{ $t('generateRandom') }}</el-button>
+            </template>
             <template #append>
               <div @click.stop="openSelect">
                 <el-select
@@ -108,7 +111,10 @@
     </div>
     <el-dialog class="bind-dialog" v-model="showBindForm"  title="注册邮箱" >
       <div class="bind-container">
-        <el-input v-model="bindForm.email" type="text" :placeholder="$t('emailAccount')" autocomplete="off">
+        <el-input :class="settingStore.settings.randomPrefix === 1 ? 'has-prepend' : ''" v-model="bindForm.email" type="text" :placeholder="$t('emailAccount')" autocomplete="off">
+          <template #prepend v-if="settingStore.settings.randomPrefix === 1">
+            <el-button type="primary" @click="generateRandomPrefixForBind">{{ $t('generateRandom') }}</el-button>
+          </template>
           <template #append>
             <div @click.stop="openSelect">
               <el-select
@@ -548,6 +554,36 @@ function submitRegister() {
   });
 }
 
+function generateRandomPrefix() {
+  const { randomPrefixLength, randomPrefixLetter, randomPrefixNumber } = settingStore.settings;
+  let chars = '';
+  if (randomPrefixLetter === 1) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (randomPrefixNumber === 1) chars += '0123456789';
+  
+  if (!chars) return;
+  
+  let result = '';
+  for (let i = 0; i < randomPrefixLength; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  registerForm.email = result;
+}
+
+function generateRandomPrefixForBind() {
+  const { randomPrefixLength, randomPrefixLetter, randomPrefixNumber } = settingStore.settings;
+  let chars = '';
+  if (randomPrefixLetter === 1) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (randomPrefixNumber === 1) chars += '0123456789';
+  
+  if (!chars) return;
+  
+  let result = '';
+  for (let i = 0; i < randomPrefixLength; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  bindForm.email = result;
+}
+
 </script>
 
 
@@ -639,6 +675,27 @@ function submitRegister() {
   .email-input :deep(.el-input__wrapper) {
     border-radius: 6px 0 0 6px;
     background: var(--el-bg-color);
+  }
+
+  .email-input.has-prepend :deep(.el-input__wrapper) {
+    border-radius: 0;
+  }
+
+  :deep(.el-input-group__prepend) {
+    padding: 0;
+    background: transparent;
+    border: none;
+    flex-shrink: 0;
+    margin: 0;
+    
+    .el-button {
+      border-radius: 6px 0 0 6px;
+      height: 38px;
+      padding: 8px 15px;
+      white-space: nowrap;
+      min-width: fit-content;
+      margin: 0;
+    }
   }
 
   .el-input {

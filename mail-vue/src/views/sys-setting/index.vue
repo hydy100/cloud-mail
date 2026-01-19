@@ -726,7 +726,31 @@
           <div style="margin-bottom: 10px;">{{ t('mustNotContain') }}</div>
           <el-input-tag style="margin-bottom: 10px;" v-model="emailPrefixFilter" :placeholder="t('mustNotContainDesc')"  />
         </div>
-        <el-button type="primary" style="width: 100%;" :loading="settingLoading" @click="saveEmailPrefix">{{ $t('save') }}</el-button>
+        <el-divider />
+        <div class="random-prefix-section">
+          <div class="random-prefix-header">
+            <span>{{ t('randomPrefix') }}</span>
+            <el-tooltip effect="dark" :content="t('randomPrefixDesc')">
+              <Icon class="warning" icon="fe:warning" width="18" height="18"/>
+            </el-tooltip>
+            <el-switch v-model="randomPrefix" :active-value="1" :inactive-value="0" style="margin-left: auto;"/>
+          </div>
+          <div class="random-prefix-options" v-if="randomPrefix === 1">
+            <div class="random-prefix-item">
+              <span>{{ t('randomPrefixLength') }}</span>
+              <el-input-number v-model="randomPrefixLength" :min="4" :max="20" style="width: 120px" />
+            </div>
+            <div class="random-prefix-item">
+              <span>{{ t('randomPrefixLetter') }}</span>
+              <el-switch v-model="randomPrefixLetter" :active-value="1" :inactive-value="0" />
+            </div>
+            <div class="random-prefix-item">
+              <span>{{ t('randomPrefixNumber') }}</span>
+              <el-switch v-model="randomPrefixNumber" :active-value="1" :inactive-value="0" />
+            </div>
+          </div>
+        </div>
+        <el-button type="primary" style="width: 100%; margin-top: 15px;" :loading="settingLoading" @click="saveEmailPrefix">{{ $t('save') }}</el-button>
       </el-dialog>
     </el-scrollbar>
   </div>
@@ -783,6 +807,10 @@ const r2DomainInput = ref('')
 const loginOpacity = ref(0)
 const minEmailPrefix = ref(0)
 const emailPrefixFilter = ref([])
+const randomPrefix = ref(0)
+const randomPrefixLength = ref(8)
+const randomPrefixLetter = ref(1)
+const randomPrefixNumber = ref(1)
 const backgroundUrl = ref('')
 let backgroundFile = {}
 const showSetBackground = ref(false)
@@ -1142,12 +1170,28 @@ function doOpacityChange() {
 function resetEmailPrefix() {
   minEmailPrefix.value = setting.value.minEmailPrefix
   emailPrefixFilter.value = setting.value.emailPrefixFilter
+  randomPrefix.value = setting.value.randomPrefix || 0
+  randomPrefixLength.value = setting.value.randomPrefixLength || 8
+  randomPrefixLetter.value = setting.value.randomPrefixLetter ?? 1
+  randomPrefixNumber.value = setting.value.randomPrefixNumber ?? 1
 }
 
 function saveEmailPrefix() {
+  if (randomPrefix.value === 1 && randomPrefixLetter.value === 0 && randomPrefixNumber.value === 0) {
+    ElMessage({
+      message: t('randomPrefixSettingError'),
+      type: "error",
+      plain: true
+    })
+    return
+  }
   const form = {}
   form.minEmailPrefix = minEmailPrefix.value
   form.emailPrefixFilter = emailPrefixFilter.value
+  form.randomPrefix = randomPrefix.value
+  form.randomPrefixLength = randomPrefixLength.value
+  form.randomPrefixLetter = randomPrefixLetter.value
+  form.randomPrefixNumber = randomPrefixNumber.value
   editSetting(form, true)
 }
 
@@ -1816,6 +1860,30 @@ form .el-button {
 
 :deep(.el-select__wrapper) {
   min-height: 28px;
+}
+
+.random-prefix-section {
+  .random-prefix-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .random-prefix-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 10px;
+    border-left: 2px solid var(--el-border-color);
+  }
+
+  .random-prefix-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 </style>

@@ -309,6 +309,13 @@ const zh = {
     character: '位',
     mustNotContain: '禁止包含',
     mustNotContainDesc: '输入多个值用,分开',
-    setSuccess: '设置成功'
+    setSuccess: '设置成功',
+    randomPrefix: '随机前缀',
+    randomPrefixDesc: '开启后注册和添加邮箱时可生成随机前缀',
+    randomPrefixLength: '前缀长度',
+    randomPrefixLetter: '包含字母',
+    randomPrefixNumber: '包含数字',
+    generateRandom: '随机',
+    randomPrefixSettingError: '至少需要选择字母或数字'
 }
 export default zh
