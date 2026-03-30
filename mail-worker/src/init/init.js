@@ -50,9 +50,7 @@ const dbInit = {
 		} catch (e) {
 			console.warn(`跳过字段：${e.message}`);
 		}
-	},
 
-	async v2_8DB(c) {
 		try {
 			await c.env.db.batch([
 				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN random_prefix INTEGER NOT NULL DEFAULT 0;`),
