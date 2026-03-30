@@ -2,7 +2,6 @@ import settingService from '../service/setting-service';
 import emailUtils from '../utils/email-utils';
 import { emailConst } from "../const/entity-const";
 import { t } from '../i18n/i18n'
-import {emailConst} from "../const/entity-const";
 
 const dbInit = {
 	async init(c) {
