@@ -10,6 +10,7 @@
                :star-cancel="starCancel"
                @jump="jumpContent"
                :time-sort="params.timeSort"
+               :type="'send'"
   >
     <template #first>
       <Icon class="icon" @click="changeTimeSort" icon="material-symbols-light:timer-arrow-down-outline"
@@ -29,7 +30,6 @@ import {starAdd, starCancel} from "@/request/star.js";
 import {defineOptions, onMounted, reactive, ref, watch} from "vue";
 import router from "@/router/index.js";
 import {Icon} from "@iconify/vue";
-import {AccountAllReceiveEnum} from "@/enums/account-enum.js";
 
 defineOptions({
   name: 'send'

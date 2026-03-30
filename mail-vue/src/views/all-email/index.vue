@@ -14,6 +14,7 @@
                  :item-height="65"
                  @jump="jumpContent"
                  @refresh-before="refreshBefore"
+                 @right-search="rightSearch"
                  :type="'all-email'"
 
     >
@@ -101,7 +102,6 @@ import {Icon} from "@iconify/vue";
 import router from "@/router/index.js";
 import {useI18n} from 'vue-i18n';
 import {toUtc} from "@/utils/day.js";
-import {AutoRefreshEnum} from "@/enums/setting-enum.js";
 import {sleep} from "@/utils/time-utils.js";
 import {useSettingStore} from "@/store/setting.js";
 import { useRoute } from 'vue-router'
@@ -204,7 +204,7 @@ function batchDelete() {
   }
 
   ElMessageBox.confirm(
-      t('delAllEmailConfirm'),
+      t('delAllConfirm'),
       {
         confirmButtonText: t('confirm'),
         cancelButtonText: t('cancel'),
@@ -225,6 +225,12 @@ function batchDelete() {
       clearLoading.value = false
     })
   })
+}
+
+function rightSearch(type, value) {
+  params.searchType = type;
+  searchValue.value = value;
+  search();
 }
 
 function refreshBefore() {
@@ -290,11 +296,13 @@ async function latest() {
 
   while (true) {
 
-    await sleep(1000)
+    let autoRefresh = settingStore.settings.autoRefresh;
+
+    await sleep(autoRefresh > 1 ? autoRefresh * 1000 : 3000);
 
     const latestId = sysEmailScroll.value.latestEmail?.emailId
 
-    if (settingStore.settings.autoRefresh === AutoRefreshEnum.DISABLED) {
+    if (autoRefresh < 2) {
       continue
     }
 
@@ -337,8 +345,8 @@ async function latest() {
       }
 
     } catch (e) {
-      if (e.code === 401) {
-        settingStore.settings.autoRefresh = AutoRefreshEnum.DISABLED;
+      if (e.code === 401 || e.code === 403) {
+        settingStore.settings.autoRefresh = 0;
       }
       console.error(e)
     }

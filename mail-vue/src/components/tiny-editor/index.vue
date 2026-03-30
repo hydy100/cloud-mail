@@ -8,7 +8,6 @@
 <script setup>
 import {ref, onMounted, onBeforeUnmount, watch, nextTick, shallowRef, defineEmits, computed} from 'vue';
 import loading from "@/components/loading/index.vue";
-import {compressImage} from "@/utils/file-utils.js";
 import {useI18n} from 'vue-i18n'
 import {useUiStore} from '@/store/ui.js'
 import {useSettingStore} from '@/store/setting.js'
@@ -140,7 +139,6 @@ function initEditor() {
 
       input.addEventListener('change', async (e) => {
         let file = e.target.files[0];
-        file = await compressImage(file);
         const reader = new FileReader();
         reader.onload = () => {
           const id = 'blobid' + (new Date()).getTime();

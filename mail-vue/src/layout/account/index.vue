@@ -6,7 +6,7 @@
     </div>
     <el-scrollbar class="scrollbar" ref="scrollbarRef">
       <div v-infinite-scroll="getAccountList" :infinite-scroll-distance="600" :infinite-scroll-immediate="false">
-        <el-card class="item" :class="itemBg(item.accountId)" v-for="item in accounts" :key="item.accountId"
+        <el-card class="item" :class="itemBg(item.accountId)" v-for="(item, index) in accounts" :key="item.accountId"
                  @click="changeAccount(item)">
           <div class="account">
             {{ item.email }}
@@ -24,8 +24,8 @@
                 <Icon icon="fluent:settings-24-filled" width="21" height="21" color="#909399"/>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="hasPerm('email:send')" @click="openSetName(item)">{{ $t('rename') }}
-                    </el-dropdown-item>
+                    <el-dropdown-item v-if="hasPerm('email:send')" @click="openSetName(item)">{{ $t('rename') }}</el-dropdown-item>
+                    <el-dropdown-item v-if="item.accountId !== userStore.user.account.accountId" @click="setAsTop(item, index)">{{ $t('pin') }}</el-dropdown-item>
                     <el-dropdown-item v-if="item.accountId !== userStore.user.account.accountId && hasPerm('account:delete')"
                                       @click="remove(item)">{{ $t('delete') }}
                     </el-dropdown-item>
@@ -131,7 +131,14 @@
 <script setup>
 import {Icon} from "@iconify/vue";
 import {nextTick, reactive, ref, watch} from "vue";
-import {accountList, accountAdd, accountDelete, accountSetName, accountSetAllReceive} from "@/request/account.js";
+import {
+  accountList,
+  accountAdd,
+  accountDelete,
+  accountSetName,
+  accountSetAllReceive,
+  accountSetAsTop
+} from "@/request/account.js";
 import {sleep} from "@/utils/time-utils.js"
 import {isEmail} from "@/utils/verify-utils.js";
 import {useSettingStore} from "@/store/setting.js";
@@ -172,8 +179,7 @@ const addForm = reactive({
 })
 let skeletonRows = 10
 const queryParams = {
-  accountId: 0,
-  size: 20
+  size: 30
 }
 
 const mySelect = ref()
@@ -291,6 +297,8 @@ function itemBg(accountId) {
   return accountStore.currentAccountId === accountId ? 'item-choose' : ''
 }
 
+
+
 function remove(account) {
   ElMessageBox.confirm(t('delConfirm', {msg: account.email}), {
     confirmButtonText: t('confirm'),
@@ -320,6 +328,7 @@ function refresh() {
   followLoading.value = false
   noLoading.value = false
   queryParams.accountId = 0
+  queryParams.lastSort = null
   getSkeletonRows();
   scrollbarRef.value.setScrollTop(0)
   accounts.splice(0, accounts.length)
@@ -336,6 +345,20 @@ function add() {
   setTimeout(() => {
     addRef.value.focus()
   }, 100)
+}
+
+function setAsTop(account, index) {
+  accountSetAsTop(account.accountId).then(() => {
+    ElMessage({
+      message: t('setSuccess'),
+      type: 'success',
+      plain: true,
+    })
+
+    const [item] = accounts.splice(index, 1);
+    accounts.splice(1, 0, item);
+
+  });
 }
 
 async function copyAccount(account) {
@@ -368,7 +391,10 @@ function getAccountList() {
 
   let start = Date.now();
 
-  accountList(queryParams.accountId, queryParams.size).then(async list => {
+  const accountId = accounts.length > 0 ? accounts.at(-1).accountId : 0;
+  const lastSort = accounts.length > 0 ? accounts.at(-1).sort : null;
+
+  accountList(accountId, queryParams.size, lastSort).then(async list => {
 
     let end = Date.now();
     let duration = end - start;
@@ -382,7 +408,7 @@ function getAccountList() {
     if (accounts.length === 0) {
       accountStore.currentAccount = list[0]
     }
-    queryParams.accountId = list.at(-1).accountId
+
     accounts.push(...list)
 
     loading.value = false

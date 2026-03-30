@@ -1,10 +1,13 @@
-name = "cloud-mail"
+name = "${NAME}"
 main = "src/index.js"
 compatibility_date = "2025-06-04"
-workers_dev = true
 
 [observability]
 enabled = true
+
+[[routes]]
+pattern = "${CUSTOM_DOMAIN}"
+custom_domain = true
 
 [[d1_databases]]
 binding = "db"
@@ -34,6 +37,7 @@ crons = ["0 16 * * *"]	#定时任务每天晚上12点执行
 domain = "${DOMAIN}"				#邮件域名可可配置多个 示例: ["example1.com","example2.com"]
 admin = "${ADMIN}"				#管理员的邮箱	示例: admin@example.com
 jwt_secret = "${JWT_SECRET}"			#jwt令牌的密钥,随便填一串字符串
+project_link = "${PROJECT_LINK}"
 
 linuxdo_client_id = "${LINUXDO_CLIENT_ID}"
 linuxdo_client_secret = "${LINUXDO_CLIENT_SECRET}"

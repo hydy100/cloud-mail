@@ -113,6 +113,10 @@ const sendType = computed(() => {
     return t('sendBanned')
   }
 
+  if (userStore.user.role.sendType === 'internal') {
+    return t('sendInternal')
+  }
+
   if (!userStore.user.role.sendCount) {
     return t('unlimited')
   }
@@ -134,6 +138,10 @@ const sendCount = computed(() => {
   }
 
   if (userStore.user.role.sendType === 'ban') {
+    return null
+  }
+
+  if (userStore.user.role.sendType === 'internal') {
     return null
   }
 

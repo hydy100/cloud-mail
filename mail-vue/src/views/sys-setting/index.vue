@@ -778,7 +778,7 @@ defineOptions({
   name: 'sys-setting'
 })
 
-const currentVersion = 'v2.7.0'
+const currentVersion = 'v2.9.0'
 const hasUpdate = ref(false)
 let getUpdateErrorCount = 1;
 const {t, locale} = useI18n();
@@ -857,7 +857,11 @@ const regKeyOptions = computed(() => [
 
 const authRefreshOptions = computed(() => [
   {label: t('disable'), value: 0},
-  {label: t('enable'), value: 1},
+  {label: '3s', value: 3},
+  {label: '5s', value: 5},
+  {label: '10s', value: 10},
+  {label: '15s', value: 15},
+  {label: '20s', value: 20},
 ])
 
 const tgChatId = ref([])
